@@ -1,23 +1,38 @@
-// src/models/Cuenta.ts
-import mongoose, { Document, Schema } from 'mongoose';
-import { IUsuario } from './Usuario';
+import "reflect-metadata";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from "typeorm";
+import { Usuario } from "./Usuario";
+import { Transferencia } from "./Transferencia";
 
-export interface ICuenta extends Document {
-  usuario: IUsuario['_id'];
-  numeroCuenta: string;
-  tipoCuenta: string;
-  banco: string;
-  saldo: number;
-  activa: boolean;
+@Entity()
+export class Cuenta {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column()
+  numeroCuenta!: string;
+
+  @Column()
+  tipoCuenta!: string;
+
+  @Column()
+  banco!: string;
+
+  @Column("decimal", { precision: 10, scale: 2, default: 0 })
+  saldo!: number;
+
+  @Column({ default: true })
+  activa!: boolean;
+
+  @ManyToOne(() => Usuario, usuario => usuario.cuentas)
+  @JoinColumn({ name: "usuarioId" })
+  usuario!: Usuario;
+
+  @Column()
+  usuarioId!: number;
+
+  @OneToMany(() => Transferencia, transferencia => transferencia.cuentaOrigen)
+  transferenciasEnviadas!: Transferencia[];
+
+  @OneToMany(() => Transferencia, transferencia => transferencia.cuentaDestino)
+  transferenciasRecibidas!: Transferencia[];
 }
-
-const CuentaSchema: Schema = new Schema({
-  usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
-  numeroCuenta: { type: String, required: true, unique: true },
-  tipoCuenta: { type: String, required: true, enum: ['Ahorro', 'Corriente'] },
-  banco: { type: String, required: true },
-  saldo: { type: Number, required: true, default: 0 },
-  activa: { type: Boolean, default: true }
-});
-
-export default mongoose.model<ICuenta>('Cuenta', CuentaSchema);

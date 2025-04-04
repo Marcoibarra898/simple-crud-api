@@ -1,37 +1,32 @@
 {
-  "name": "simple-crud-api",
+  "name": "banconsumir-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "API RESTful para el proyecto BanConsumir",
+  "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "nodemon --exec ts-node src/server.ts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Marcoibarra898/simple-crud-api.git"
+    "dev": "nodemon --exec ts-node src/server.ts",
+    "typeorm": "typeorm-ts-node-commonjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Marcoibarra898/simple-crud-api/issues"
-  },
-  "homepage": "https://github.com/Marcoibarra898/simple-crud-api#readme",
-  "description": "",
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^5.1.0",
-    "mongoose": "^8.13.2"
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "funding": "^1.0.9",
+    "mysql2": "^3.14.0",
+    "reflect-metadata": "^0.1.14",
+    "typeorm": "^0.3.22"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.1",
-    "@types/node": "^22.14.0",
-    "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.1.4",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
   }
 }

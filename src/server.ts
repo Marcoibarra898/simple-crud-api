@@ -1,7 +1,9 @@
+// src/server.ts
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
+import "reflect-metadata";
+import { AppDataSource } from './config/database';
 
 // Importar rutas
 import usuarioRoutes from './routes/usuarioRoutes';
@@ -17,10 +19,12 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Conexión a MongoDB
-mongoose.connect(process.env.MONGODB_URI as string)
-  .then(() => console.log('Conexión a MongoDB establecida'))
-  .catch(err => console.error('Error conectando a MongoDB:', err));
+// Inicialización de la base de datos
+AppDataSource.initialize()
+  .then(() => {
+    console.log("Conexión a la base de datos MySQL establecida");
+  })
+  .catch((error) => console.error("Error al conectar con la base de datos:", error));
 
 // Rutas
 app.use('/api/usuarios', usuarioRoutes);

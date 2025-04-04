@@ -1,20 +1,27 @@
-// src/models/Usuario.ts
-import mongoose, { Document, Schema } from 'mongoose';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn } from "typeorm";
+import "reflect-metadata";
+import { Cuenta } from "./Cuenta";
 
-export interface IUsuario extends Document {
-  nombre: string;
-  apellido: string;
-  email: string;
-  telefono: string;
-  fechaRegistro: Date;
+@Entity()
+export class Usuario {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column()
+  nombre!: string;
+
+  @Column()
+  apellido!: string;
+
+  @Column({ unique: true })
+  email!: string;
+
+  @Column()
+  telefono!: string;
+
+  @CreateDateColumn()
+  fechaRegistro!: Date;
+
+  @OneToMany(() => Cuenta, cuenta => cuenta.usuario)
+  cuentas!: Cuenta[];;
 }
-
-const UsuarioSchema: Schema = new Schema({
-  nombre: { type: String, required: true },
-  apellido: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  telefono: { type: String, required: true },
-  fechaRegistro: { type: Date, default: Date.now }
-});
-
-export default mongoose.model<IUsuario>('Usuario', UsuarioSchema);

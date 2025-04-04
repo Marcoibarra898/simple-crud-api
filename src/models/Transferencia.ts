@@ -1,23 +1,34 @@
-// src/models/Transferencia.ts
-import mongoose, { Document, Schema } from 'mongoose';
-import { ICuenta } from './Cuenta';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from "typeorm";
+import { Cuenta } from "./Cuenta";
 
-export interface ITransferencia extends Document {
-  cuentaOrigen: ICuenta['_id'];
-  cuentaDestino: ICuenta['_id'];
-  monto: number;
-  concepto: string;
-  fecha: Date;
-  estado: string;
+@Entity()
+export class Transferencia {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @ManyToOne(() => Cuenta, cuenta => cuenta.transferenciasEnviadas)
+  @JoinColumn({ name: "cuentaOrigenId" })
+  cuentaOrigen!: Cuenta;
+
+  @Column()
+  cuentaOrigenId!: number;
+
+  @ManyToOne(() => Cuenta, cuenta => cuenta.transferenciasRecibidas)
+  @JoinColumn({ name: "cuentaDestinoId" })
+  cuentaDestino!: Cuenta;
+
+  @Column()
+  cuentaDestinoId!: number;
+
+  @Column("decimal", { precision: 10, scale: 2 })
+  monto!: number;
+
+  @Column()
+  concepto!: string;
+
+  @CreateDateColumn()
+  fecha!: Date;
+
+  @Column({ default: "Pendiente" })
+  estado!: string;
 }
-
-const TransferenciaSchema: Schema = new Schema({
-  cuentaOrigen: { type: Schema.Types.ObjectId, ref: 'Cuenta', required: true },
-  cuentaDestino: { type: Schema.Types.ObjectId, ref: 'Cuenta', required: true },
-  monto: { type: Number, required: true },
-  concepto: { type: String, required: true },
-  fecha: { type: Date, default: Date.now },
-  estado: { type: String, required: true, enum: ['Pendiente', 'Completada', 'Rechazada'], default: 'Pendiente' }
-});
-
-export default mongoose.model<ITransferencia>('Transferencia', TransferenciaSchema);

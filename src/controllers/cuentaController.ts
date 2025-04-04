@@ -1,10 +1,15 @@
 import { Request, Response } from 'express';
-import Cuenta, { ICuenta } from '../models/Cuenta';
+import { AppDataSource } from '../config/database';
+import { Cuenta } from '../models/Cuenta';
+
+const cuentaRepository = AppDataSource.getRepository(Cuenta);
 
 // Obtener todas las cuentas
 export const getCuentas = async (req: Request, res: Response): Promise<void> => {
   try {
-    const cuentas = await Cuenta.find().populate('usuario', 'nombre apellido');
+    const cuentas = await cuentaRepository.find({
+      relations: ["usuario"]
+    });
     res.status(200).json(cuentas);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener cuentas", error });
@@ -14,7 +19,11 @@ export const getCuentas = async (req: Request, res: Response): Promise<void> => 
 // Obtener una cuenta por ID
 export const getCuentaPorId = async (req: Request, res: Response): Promise<void> => {
   try {
-    const cuenta = await Cuenta.findById(req.params.id).populate('usuario', 'nombre apellido');
+    const id = parseInt(req.params.id);
+    const cuenta = await cuentaRepository.findOne({
+      where: { id },
+      relations: ["usuario"]
+    });
     
     if (!cuenta) {
       res.status(404).json({ message: "Cuenta no encontrada" });
@@ -30,46 +39,46 @@ export const getCuentaPorId = async (req: Request, res: Response): Promise<void>
 // Crear una nueva cuenta
 export const crearCuenta = async (req: Request, res: Response): Promise<void> => {
   try {
-    const nuevaCuenta = new Cuenta(req.body);
-    const cuentaGuardada = await nuevaCuenta.save();
-    res.status(201).json(cuentaGuardada);
-    } catch (error) {
+    const nuevaCuenta = cuentaRepository.create(req.body);
+    const resultado = await cuentaRepository.save(nuevaCuenta);
+    res.status(201).json(resultado);
+  } catch (error) {
     res.status(400).json({ message: "Error al crear cuenta", error });
-    }
+  }
 };
 
 // Actualizar una cuenta
 export const actualizarCuenta = async (req: Request, res: Response): Promise<void> => {
-try {
-const cuentaActualizada = await Cuenta.findByIdAndUpdate(
-  req.params.id,
-  req.body,
-  { new: true }
-);
-
-if (!cuentaActualizada) {
-  res.status(404).json({ message: "Cuenta no encontrada" });
-  return;
-}
-
-res.status(200).json(cuentaActualizada);
-} catch (error) {
-res.status(400).json({ message: "Error al actualizar cuenta", error });
-}
+  try {
+    const id = parseInt(req.params.id);
+    const cuenta = await cuentaRepository.findOneBy({ id });
+    
+    if (!cuenta) {
+      res.status(404).json({ message: "Cuenta no encontrada" });
+      return;
+    }
+    
+    cuentaRepository.merge(cuenta, req.body);
+    const resultado = await cuentaRepository.save(cuenta);
+    res.status(200).json(resultado);
+  } catch (error) {
+    res.status(400).json({ message: "Error al actualizar cuenta", error });
+  }
 };
 
 // Eliminar una cuenta
 export const eliminarCuenta = async (req: Request, res: Response): Promise<void> => {
-try {
-const cuentaEliminada = await Cuenta.findByIdAndDelete(req.params.id);
-
-if (!cuentaEliminada) {
-  res.status(404).json({ message: "Cuenta no encontrada" });
-  return;
-}
-
-res.status(200).json({ message: "Cuenta eliminada correctamente" });
-} catch (error) {
-res.status(500).json({ message: "Error al eliminar cuenta", error });
-}
+  try {
+    const id = parseInt(req.params.id);
+    const resultado = await cuentaRepository.delete(id);
+    
+    if (resultado.affected === 0) {
+      res.status(404).json({ message: "Cuenta no encontrada" });
+      return;
+    }
+    
+    res.status(200).json({ message: "Cuenta eliminada correctamente" });
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar cuenta", error });
+  }
 };
