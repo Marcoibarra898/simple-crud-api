@@ -4,9 +4,9 @@ import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
 
 // Importar rutas
-import usuarioRoutes from './routes/usuarioRoutes';
-import cuentaRoutes from './routes/cuentaRoutes';
-import transferenciaRoutes from './routes/transferenciaRoutes';
+import usuarioRoutes from '../routes/usuarioRoutes';
+import cuentaRoutes from '../routes/cuentaRoutes';
+import transferenciaRoutes from '../routes/transferenciaRoutes';
 
 // Configuración
 dotenv.config();

@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { testConnection } from './connection/connection';
 
 // Importar rutas
-import usuarioRoutes from './routes/usuarioRoutes';
+import usuarioRoutes from 'src/routes/usuarioRoutes';
 import cuentaRoutes from './routes/cuentaRoutes';
 import transferenciaRoutes from './routes/transferenciaRoutes';
 // Importar otras rutas si existen (por ejemplo, productRoutes)

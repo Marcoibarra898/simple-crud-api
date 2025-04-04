@@ -5,7 +5,7 @@ import {
   createCuenta, 
   updateCuenta, 
   deleteCuenta 
-} from './Controllers/cuentaController';
+} from 'src\controllers\cuentaController.ts';
 
 const router = Router();
 
