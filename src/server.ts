@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
+import { Sequelize } from 'sequelize';
 
 // Importar rutas
 import usuarioRoutes from './routes/usuarioRoutes';
@@ -17,10 +17,23 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Conexión a MongoDB
-mongoose.connect(process.env.MONGODB_URI as string)
-  .then(() => console.log('Conexión a MongoDB establecida'))
-  .catch(err => console.error('Error conectando a MongoDB:', err));
+// Conexión a MySQL con Sequelize
+const sequelize = new Sequelize(
+  process.env.DB_NAME as string,
+  process.env.DB_USER as string,
+  process.env.DB_PASSWORD as string, 
+  {
+    host: process.env.DB_HOST || 'localhost',
+    dialect: 'mysql',
+    port: parseInt(process.env.DB_PORT || '3306'),
+    logging: console.log
+  }
+);
+
+// Verificar conexión a la base de datos
+sequelize.authenticate()
+  .then(() => console.log('Conexión a MySQL establecida correctamente'))
+  .catch(err => console.error('Error conectando a MySQL:', err));
 
 // Rutas
 app.use('/api/usuarios', usuarioRoutes);
@@ -29,7 +42,7 @@ app.use('/api/transferencias', transferenciaRoutes);
 
 // Ruta base
 app.get('/', (req, res) => {
-  res.send('API de BanConsumir funcionando correctamente');
+  res.send('API de BanConsumir funcionando correctamente con MySQL');
 });
 
 // Iniciar servidor
