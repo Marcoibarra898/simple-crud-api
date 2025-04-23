@@ -17,8 +17,15 @@ export class Cuenta {
   @Column()
   banco!: string;
 
-  @Column("decimal", { precision: 10, scale: 2, default: 0 })
-  saldo!: number;
+  @Column("decimal", {
+    precision: 10,
+    scale: 2,
+    transformer: {
+      to: (value: number) => value,                   
+      from: (value: string) => parseFloat(value),     
+    },
+  })
+  saldo!: number;;
 
   @Column({ default: true })
   activa!: boolean;
